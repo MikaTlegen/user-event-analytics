@@ -1,11 +1,14 @@
 package com.example.user_event_analytics.entity;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -19,6 +22,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class UserEvent {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @Field(name = "user_id")
     private Long userId;
@@ -26,6 +30,7 @@ public class UserEvent {
     private String eventType;
     @NotNull
     @Field(name = "time_stamp")
+    @CreationTimestamp
     private Date timeStamp;
     @Field(name = "details")
     @Size(max = 100)
