@@ -2,15 +2,24 @@ package com.example.user_event_analytics.service;
 
 import com.example.user_event_analytics.entity.User;
 import com.example.user_event_analytics.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -52,5 +61,32 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = getUser(id);
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public List<User> getComplexUsersNative(String namePattern, String emailPattern) {
+        StringBuilder sql = new StringBuilder("  SELECT * FROM users WHERE 1=1");
+        if (namePattern != null) {
+            sql.append(" AND user_name LIKE :namePattern ");
+        }
+        if (emailPattern != null) {
+            sql.append(" AND email LIKE :emailPattern ");
+        }
+
+        sql.append("ORDER BY LENGTH(user_name) DESC");
+
+        Query query = entityManager.createNativeQuery(sql.toString(), User.class);
+        if (namePattern != null && !namePattern.trim().isEmpty()) {
+            query.setParameter("namePattern", "%" + namePattern.trim() + "%");
+        }
+        if (emailPattern != null && !emailPattern.trim().isEmpty()) {
+            query.setParameter("emailPattern", "%" + emailPattern.trim() + "%");
+        }
+
+        return query.getResultList();
+    }
+
+    public List<User> getComplexUsersCriteria(String name, String email) {
+        return null;
     }
 }

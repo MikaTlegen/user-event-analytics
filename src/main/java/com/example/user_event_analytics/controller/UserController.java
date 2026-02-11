@@ -28,8 +28,23 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/native")
+    public List<User> getUsersByNativeQuery(@RequestParam(required = false) String name,
+                                           @RequestParam(required = false) String email) {
+        return userService.getComplexUsersNative(name, email);
+    }
+
+    @GetMapping("/criteria")
+    public List<User> getComplexUsersByCriteria(@RequestParam(required = false) String name,
+                                              @RequestParam(required = false) String email) {
+        return userService.getComplexUsersCriteria(name, email);
+
+    }
+
+
     @PostMapping("/user")
     public ResponseEntity<User> createUser(@RequestBody User user) {
+
         User createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
