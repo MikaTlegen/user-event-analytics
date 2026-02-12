@@ -22,7 +22,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class UserEvent {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @Field(name = "user_id")
     private Long userId;
