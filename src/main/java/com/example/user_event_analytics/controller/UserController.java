@@ -1,7 +1,10 @@
 package com.example.user_event_analytics.controller;
 
+import com.example.user_event_analytics.dto.request_dto.UserRequestDTO;
+import com.example.user_event_analytics.dto.response_dto.UserResponseDTO;
 import com.example.user_event_analytics.entity.User;
 import com.example.user_event_analytics.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,39 +22,39 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/native")
-    public ResponseEntity<List<User>> getUsersByNativeQuery(@RequestParam(required = false) String name,
+    public ResponseEntity<List<UserResponseDTO>> getUsersByNativeQuery(@RequestParam(required = false) String name,
                                            @RequestParam(required = false) String email) {
         return ResponseEntity.ok(userService.getComplexUsersNative(name, email));
     }
 
     @GetMapping("/criteria")
-    public ResponseEntity<List<User>> getComplexUsersByCriteria(@RequestParam(required = false) String name,
+    public ResponseEntity<List<UserResponseDTO>> getComplexUsersByCriteria(@RequestParam(required = false) String name,
                                               @RequestParam(required = false) String email) {
         return ResponseEntity.ok(userService.getComplexUsersCriteria(name, email));
 
     }
 
 
-    @PostMapping("/user")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    @PostMapping()
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO user) {
 
-        User createdUser = userService.createUser(user);
+        UserResponseDTO createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User update = userService.updateUser(user, id);
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO user) {
+        UserResponseDTO update = userService.updateUser(user, id);
         return ResponseEntity.ok(update);
     }
 

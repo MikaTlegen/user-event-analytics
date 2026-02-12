@@ -1,6 +1,9 @@
 package com.example.user_event_analytics.service;
 
+import com.example.user_event_analytics.dto.request_dto.UserRequestDTO;
+import com.example.user_event_analytics.dto.response_dto.UserResponseDTO;
 import com.example.user_event_analytics.entity.User;
+import com.example.user_event_analytics.mapper.UserMapper;
 import com.example.user_event_analytics.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,13 +13,16 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class UserService {
 
@@ -24,51 +30,58 @@ public class UserService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public User getUser(Long id) {
-        return userRepository.findById(id)
+    public UserResponseDTO getUser(Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return userMapper.toResponseDto(user);
     }
 
-    public List<User> getAllUsers() {
+    public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll()
                 .stream()
                 .filter(name -> !name.getName().equals("John Doe"))
-                .toList();
+                .map(userMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public User createUser(User user) {
+    public UserResponseDTO createUser(UserRequestDTO user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("User with email " + user.getEmail() + " already exists");
         }
 
-        User sevedUser = userRepository.save(user);
-        return sevedUser;
+        User userEntity = userMapper.toEntity(user);
+        User sevedUser = userRepository.save(userEntity);
+        return userMapper.toResponseDto(sevedUser);
     }
 
     @Transactional
-    public User updateUser(User userDetails, Long id) {
-        User user = getUser(id);
-        user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
-        user.setUserRole(userDetails.getUserRole());
-        return userRepository.save(user);
+    public UserResponseDTO updateUser(UserRequestDTO userDetails, Long id) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        existingUser.setName(userDetails.getName());
+        existingUser.setEmail(userDetails.getEmail());
+        existingUser.setUserRole(userDetails.getUserRole());
+
+        User updatedUser = userRepository.save(existingUser);
+        return userMapper.toResponseDto(updatedUser);
 
     }
 
     @Transactional
     public void deleteUser(Long id) {
-        User user = getUser(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         userRepository.delete(user);
     }
 
     @Transactional
-    public List<User> getComplexUsersNative(String namePattern, String emailPattern) {
+    public List<UserResponseDTO> getComplexUsersNative(String namePattern, String emailPattern) {
         StringBuilder sql = new StringBuilder("  SELECT * FROM users WHERE 1=1");
         if (namePattern != null) {
             sql.append(" AND user_name LIKE :namePattern ");
@@ -87,11 +100,14 @@ public class UserService {
             query.setParameter("emailPattern", "%" + emailPattern.trim() + "%");
         }
 
-        return query.getResultList();
+        List<User> users = query.getResultList();
+        return users.stream()
+                .map(userMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<User> getComplexUsersCriteria(String name, String email) {
+    public List<UserResponseDTO> getComplexUsersCriteria(String name, String email) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> user = cq.from(User.class);
@@ -107,7 +123,10 @@ public class UserService {
         cq.where(predicates.toArray(new Predicate[0]));
         cq.orderBy(cb.asc(user.get("name")));
 
-        return entityManager.createQuery(cq).getResultList();
+        List<User> users = entityManager.createQuery(cq).getResultList();
+        return users.stream()
+                .map(userMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
 }
