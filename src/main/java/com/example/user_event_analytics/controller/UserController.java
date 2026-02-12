@@ -24,20 +24,20 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/native")
-    public List<User> getUsersByNativeQuery(@RequestParam(required = false) String name,
+    public ResponseEntity<List<User>> getUsersByNativeQuery(@RequestParam(required = false) String name,
                                            @RequestParam(required = false) String email) {
-        return userService.getComplexUsersNative(name, email);
+        return ResponseEntity.ok(userService.getComplexUsersNative(name, email));
     }
 
     @GetMapping("/criteria")
-    public List<User> getComplexUsersByCriteria(@RequestParam(required = false) String name,
+    public ResponseEntity<List<User>> getComplexUsersByCriteria(@RequestParam(required = false) String name,
                                               @RequestParam(required = false) String email) {
-        return userService.getComplexUsersCriteria(name, email);
+        return ResponseEntity.ok(userService.getComplexUsersCriteria(name, email));
 
     }
 
