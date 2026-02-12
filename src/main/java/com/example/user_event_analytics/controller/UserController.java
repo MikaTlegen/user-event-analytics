@@ -44,7 +44,6 @@ public class UserController {
 
     }
 
-
     @PostMapping()
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO user) {
 
@@ -62,6 +61,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/non-admins")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsersExceptAdmins() {
+        return ResponseEntity.ok(userService.getAllUsersExceptAdmins());
     }
 
 }

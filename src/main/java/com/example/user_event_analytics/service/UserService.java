@@ -42,7 +42,15 @@ public class UserService {
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .filter(name -> !name.getName().equals("John Doe"))
+                .map(userMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserResponseDTO> getAllUsersExceptAdmins() {
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> user.getUserRole() == null ||
+                        !"ADMIN_ROLE".equalsIgnoreCase(user.getUserRole().name()))
                 .map(userMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
