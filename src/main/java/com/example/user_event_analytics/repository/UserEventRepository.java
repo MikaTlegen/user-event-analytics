@@ -2,6 +2,7 @@ package com.example.user_event_analytics.repository;
 
 import com.example.user_event_analytics.entity.UserEvent;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

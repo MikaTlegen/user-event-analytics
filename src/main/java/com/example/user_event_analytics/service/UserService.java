@@ -92,13 +92,13 @@ public class UserService {
     public List<UserResponseDTO> getComplexUsersNative(String namePattern, String emailPattern) {
         StringBuilder sql = new StringBuilder("  SELECT * FROM users WHERE 1=1");
         if (namePattern != null) {
-            sql.append(" AND user_name LIKE :namePattern ");
+            sql.append(" AND name LIKE :namePattern ");
         }
         if (emailPattern != null) {
             sql.append(" AND email LIKE :emailPattern ");
         }
 
-        sql.append("ORDER BY LENGTH(user_name) DESC");
+        sql.append(" ORDER BY LENGTH(name) DESC");
 
         Query query = entityManager.createNativeQuery(sql.toString(), User.class);
         if (namePattern != null && !namePattern.trim().isEmpty()) {
