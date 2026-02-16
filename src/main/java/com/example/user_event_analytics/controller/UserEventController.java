@@ -1,6 +1,7 @@
 package com.example.user_event_analytics.controller;
 
 import com.example.user_event_analytics.dto.UserEventRequestDTO;
+import com.example.user_event_analytics.dto.response_dto.EventTypeStatsDTO;
 import com.example.user_event_analytics.dto.response_dto.UserEventResponseDTO;
 import com.example.user_event_analytics.service.UserEventService;
 import jakarta.validation.Valid;
@@ -35,5 +36,10 @@ public class UserEventController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<UserEventResponseDTO>> getEventsByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(userEventService.getEventsByUserId(userId));
+    }
+
+    @GetMapping("/stats/type")
+    public ResponseEntity<List<EventTypeStatsDTO>> getEventsByType() {
+        return ResponseEntity.ok(userEventService.getEventsCountByType());
     }
 }

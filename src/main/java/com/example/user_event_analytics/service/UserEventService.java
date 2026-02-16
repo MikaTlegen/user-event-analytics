@@ -1,9 +1,12 @@
 package com.example.user_event_analytics.service;
 
 import com.example.user_event_analytics.dto.UserEventRequestDTO;
+import com.example.user_event_analytics.dto.response_dto.EventTypeStatsDTO;
 import com.example.user_event_analytics.dto.response_dto.UserEventResponseDTO;
 import com.example.user_event_analytics.entity.UserEvent;
+import com.example.user_event_analytics.mapper.EventStatsMapper;
 import com.example.user_event_analytics.mapper.UserEventMapper;
+import com.example.user_event_analytics.repository.UserEventPostgresEntity;
 import com.example.user_event_analytics.repository.UserEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 public class UserEventService {
     private final UserEventRepository userEventRepository;
     private final UserEventMapper userEventMapper;
+    private final UserEventPostgresEntity userEventPostgresEntity;
+    private final EventStatsMapper eventStatsMapper;
 
     public UserEventResponseDTO saveEvent(UserEventRequestDTO requestDTO) {
         UserEvent userEvent = userEventMapper.mapToEntity(requestDTO);
@@ -41,4 +46,10 @@ public class UserEventService {
                 .collect(Collectors.toList());
     }
 
+    public List<EventTypeStatsDTO> getEventsCountByType() {
+        List<Object[]> results = userEventPostgresEntity.countEventsByTypeNative();
+        return results.stream()
+                .map(eventStatsMapper::map)
+                .collect(Collectors.toList());
+    }
 }

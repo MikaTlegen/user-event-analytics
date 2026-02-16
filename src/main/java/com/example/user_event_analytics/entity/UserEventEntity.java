@@ -1,6 +1,7 @@
 package com.example.user_event_analytics.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,7 @@ public class UserEventEntity {
     @Column(name = "event_data", nullable = false)
     @CreationTimestamp
     private LocalDateTime timestamp;
+    @Column(name = "details")
+    @Size(max = 100)
+    private String details;
 }
