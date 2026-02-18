@@ -3,6 +3,7 @@ package com.example.user_event_analytics.service;
 import com.example.user_event_analytics.dto.request_dto.UserRequestDTO;
 import com.example.user_event_analytics.dto.response_dto.UserResponseDTO;
 import com.example.user_event_analytics.entity.User;
+import com.example.user_event_analytics.enums.Role;
 import com.example.user_event_analytics.mapper.UserMapper;
 import com.example.user_event_analytics.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -135,6 +136,14 @@ public class UserService {
         return users.stream()
                 .map(userMapper::toResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<UserResponseDTO> getAllAdminUsers() {
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> user.getUserRole() == Role.ADMIN_ROLE)
+                .map(userMapper::toResponseDto)
+                .toList();
     }
 
 }

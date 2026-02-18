@@ -2,11 +2,11 @@ package com.example.user_event_analytics.controller;
 
 import com.example.user_event_analytics.dto.request_dto.UserRequestDTO;
 import com.example.user_event_analytics.dto.response_dto.UserResponseDTO;
-import com.example.user_event_analytics.entity.User;
 import com.example.user_event_analytics.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,19 +27,20 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/native")
     public ResponseEntity<List<UserResponseDTO>> getUsersByNativeQuery(@RequestParam(required = false) String name,
-                                           @RequestParam(required = false) String email) {
+                                                                       @RequestParam(required = false) String email) {
         return ResponseEntity.ok(userService.getComplexUsersNative(name, email));
     }
 
     @GetMapping("/criteria")
     public ResponseEntity<List<UserResponseDTO>> getComplexUsersByCriteria(@RequestParam(required = false) String name,
-                                              @RequestParam(required = false) String email) {
+                                                                           @RequestParam(required = false) String email) {
         return ResponseEntity.ok(userService.getComplexUsersCriteria(name, email));
 
     }
