@@ -1,4 +1,4 @@
-package com.example.user_event_analytics.dto;
+package com.example.user_event_analytics.dto.request_dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

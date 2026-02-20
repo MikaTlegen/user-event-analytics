@@ -1,6 +1,6 @@
 package com.example.user_event_analytics.controller;
 
-import com.example.user_event_analytics.dto.UserEventRequestDTO;
+import com.example.user_event_analytics.dto.request_dto.UserEventRequestDTO;
 import com.example.user_event_analytics.dto.response_dto.EventTypeStatsDTO;
 import com.example.user_event_analytics.dto.response_dto.UserEventResponseDTO;
 import com.example.user_event_analytics.service.UserEventService;
@@ -23,7 +23,7 @@ public class UserEventController {
     @PostMapping
     public ResponseEntity<UserEventResponseDTO> createEvent(@Valid @RequestBody UserEventRequestDTO userEvent) {
 
-        UserEventResponseDTO savedEvent = userEventService.saveEvent(userEvent);
+        UserEventResponseDTO savedEvent = userEventService.sendEventToKafka(userEvent);
         return ResponseEntity.ok(savedEvent);
     }
 

@@ -1,6 +1,6 @@
 package com.example.user_event_analytics.mapper;
 
-import com.example.user_event_analytics.dto.UserEventRequestDTO;
+import com.example.user_event_analytics.dto.request_dto.UserEventRequestDTO;
 import com.example.user_event_analytics.dto.response_dto.UserEventResponseDTO;
 import com.example.user_event_analytics.entity.UserEvent;
 import org.springframework.stereotype.Component;
