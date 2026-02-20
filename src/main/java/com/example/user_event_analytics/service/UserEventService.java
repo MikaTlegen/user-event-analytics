@@ -32,7 +32,6 @@ public class UserEventService {
         return userEventMapper.mapToResponseDTO(userEvent);
     }
 
-    @Transactional
     public UserEventResponseDTO saveEvent(UserEventRequestDTO requestDTO) {
         UserEvent userEvent = userEventMapper.mapToEntity(requestDTO);
         if (userEvent.getTimeStamp() == null) {
