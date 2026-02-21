@@ -1,5 +1,6 @@
 package com.example.user_event_analytics.controller;
 
+import com.example.user_event_analytics.annotation.TrackEvent;
 import com.example.user_event_analytics.dto.request_dto.UserEventRequestDTO;
 import com.example.user_event_analytics.dto.response_dto.EventTypeStatsDTO;
 import com.example.user_event_analytics.dto.response_dto.UserEventResponseDTO;
@@ -20,6 +21,7 @@ public class UserEventController {
 
     private final UserEventService userEventService;
 
+    @TrackEvent(action = "create_event")
     @PostMapping
     public ResponseEntity<UserEventResponseDTO> createEvent(@Valid @RequestBody UserEventRequestDTO userEvent) {
 

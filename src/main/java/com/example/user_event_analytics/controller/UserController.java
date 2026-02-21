@@ -1,5 +1,6 @@
 package com.example.user_event_analytics.controller;
 
+import com.example.user_event_analytics.annotation.LogExecutionTime;
 import com.example.user_event_analytics.dto.request_dto.UserRequestDTO;
 import com.example.user_event_analytics.dto.response_dto.UserResponseDTO;
 import com.example.user_event_analytics.service.UserService;
@@ -45,6 +46,7 @@ public class UserController {
 
     }
 
+    @LogExecutionTime
     @PostMapping()
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO user) {
 
