@@ -20,7 +20,7 @@ public class UserEventEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private Long userId;
     @Column(name = "event_type", nullable = false)
     private String eventType;
     @Column(name = "event_data", nullable = false)

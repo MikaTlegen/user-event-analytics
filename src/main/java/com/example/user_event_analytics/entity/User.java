@@ -2,12 +2,10 @@ package com.example.user_event_analytics.entity;
 
 import com.example.user_event_analytics.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 
 @Entity
