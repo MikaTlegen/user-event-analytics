@@ -9,6 +9,7 @@ import com.example.user_event_analytics.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.persistence.Table;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -91,7 +92,10 @@ public class UserService {
 
     @Transactional
     public List<UserResponseDTO> getComplexUsersNative(String namePattern, String emailPattern) {
-        StringBuilder sql = new StringBuilder("  SELECT * FROM users WHERE 1=1");
+        Table tableAnnotation = User.class.getAnnotation(Table.class);
+        String tableName = (tableAnnotation != null) ? tableAnnotation.name() : "users";
+
+        StringBuilder sql = new StringBuilder(" SELECT * FROM ").append(tableName).append(" WHERE 1=1");
         if (namePattern != null) {
             sql.append(" AND name LIKE :namePattern ");
         }
