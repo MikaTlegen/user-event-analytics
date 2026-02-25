@@ -1,0 +1,474 @@
+{
+	"info": {
+		"name": "User Event Analytics API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('user_id', response.id);",
+									"    pm.collectionVariables.set('last_created_user_id', response.id);",
+									"    console.log('Created user with ID:', response.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"userRole\": \"USER_ROLE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Create a new user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Get user by ID (uses dynamic ID from environment)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const users = pm.response.json();",
+									"    if (users && users.length > 0 && !pm.environment.get('user_id')) {",
+									"        pm.environment.set('user_id', users[0].id);",
+									"        console.log('Set user_id to first user:', users[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Get all users (requires ADMIN role)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jane Doe Updated\",\n  \"email\": \"jane.updated@example.com\",\n  \"userRole\": \"ADMIN_ROLE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Update user by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 204) {",
+									"    console.log('Deleted user with ID:', pm.environment.get('user_id'));",
+									"    pm.environment.unset('user_id');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Delete user by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-Admin Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/non-admins",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"non-admins"
+							]
+						},
+						"description": "Get all users except admins"
+					},
+					"response": []
+				},
+				{
+					"name": "Native Query Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/native?name=John&email=john%40example.com",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"native"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "John",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "john@example.com",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Complex search using native query (optional params)"
+					},
+					"response": []
+				},
+				{
+					"name": "Criteria API Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/criteria?name=Jane&email=jane%40example.com",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"criteria"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Jane",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "jane@example.com",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Complex search using JPA Criteria API (optional params)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Role Distribution",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/status/role",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"status",
+								"role"
+							]
+						},
+						"description": "Get distribution of users by role (статистика по ролям)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Events",
+			"item": [
+				{
+					"name": "Create Event",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const userId = pm.environment.get('user_id') || pm.collectionVariables.get('last_created_user_id') || '1';",
+									"if (userId) {",
+									"    console.log('Using userId:', userId);",
+									"    pm.variables.set('current_user_id', userId);",
+									"} else {",
+									"    console.warn('No user_id found. Please create a user first.');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('event_id', response.id);",
+									"    pm.collectionVariables.set('last_created_event_id', response.id);",
+									"    console.log('Created event with ID:', response.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{current_user_id}},\n  \"eventType\": \"LOGIN\",\n  \"timeStamp\": \"{{$isoTimestamp}}\",\n  \"details\": \"User performed login action\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/events",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"events"
+							]
+						},
+						"description": "Create a new user event"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/events",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"events"
+							]
+						},
+						"description": "Get all user events"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Events by User ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/events/user/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"events",
+								"user",
+								"{{user_id}}"
+							]
+						},
+						"description": "Get user events by user ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event Type Distribution",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/events/stats/type",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"events",
+								"stats",
+								"type"
+							]
+						},
+						"description": "Get distribution of events by type (статистика по типам событий)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get All Admin Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/admins",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"admins"
+							]
+						},
+						"description": "Get all users with ADMIN_ROLE"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if (!pm.environment.get('base_url')) {",
+					"    pm.environment.set('base_url', 'http://localhost:8080');",
+					"}",
+					"",
+					"console.log('Using base URL:', pm.environment.get('base_url'));"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "last_created_user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "last_created_event_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
