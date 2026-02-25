@@ -1,6 +1,7 @@
 package com.example.user_event_analytics.service;
 
 import com.example.user_event_analytics.dto.request_dto.UserRequestDTO;
+import com.example.user_event_analytics.dto.response_dto.RoleStatsDTO;
 import com.example.user_event_analytics.dto.response_dto.UserResponseDTO;
 import com.example.user_event_analytics.entity.User;
 import com.example.user_event_analytics.enums.Role;
@@ -148,6 +149,22 @@ public class UserService {
                 .filter(user -> user.getUserRole() == Role.ADMIN_ROLE)
                 .map(userMapper::toResponseDto)
                 .toList();
+    }
+
+    public List<RoleStatsDTO> getUserRoleDistribution() {
+        List<Object[]> results = userRepository.countUsersByRole(); // [ [USER_ROLE, 7], [ADMIN_ROLE, 3] ]
+        long totalUsers = userRepository.count(); // 10
+
+        return results.stream()
+                .map(row -> {
+                    Role role = (Role) row[0];
+                    Long count = (Long) row[1];
+                    double percentage = (count * 100.0) / totalUsers;
+                    double roundedPercentage = Math.round(percentage * 100.0) / 100.0;
+
+                    return new RoleStatsDTO(role.name(), count, roundedPercentage);
+                })
+                .collect(Collectors.toList());
     }
 
 }
